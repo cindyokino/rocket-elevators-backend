@@ -10,115 +10,137 @@ app.use((req, res, next) => {
 });
 
 
+/* ------------------------------------------------------------------------------
+======================== GLOBAL VARIABLES AND CONSTANTS ======================== 
+--------------------------------------------------------------------------------*/
+const standardFee= 10;
+const premiumFee = 13;
+const exceliumFee = 16;
+
+const standardPrice = 7565;
+const premiumPrice = 12345;
+const exceliumPrice = 15400;
+
+/* ------------------------------------------------------------------------------
+================================== CALCULATIONS ================================== 
+--------------------------------------------------------------------------------*/
 
 /***** CALCULATE NUMBER OF ELEVATORS - RESIDENTIAL BUILDING *****/
 app.get('/elevatorsResidential', (req, res) => {
+    let numColumns;
     let apartments = parseInt(req.query.apartments);
     let floors = parseInt(req.query.floors);
     let basements = parseInt(req.query.basements);
-    let averageDoorsPerFloor =  Math.ceil(apartments / (floors - basements));
+    
+    let totalFloors = floors + basements;
+    let averageDoorsPerFloor =  Math.ceil(apartments / floors);
 
     let elevators = Math.ceil(averageDoorsPerFloor / 6);
-    if (floors > 20) {
-		numColumns = Math.ceil(floors / 20);
+    if (totalFloors > 20) {
+		numColumns = Math.ceil(totalFloors / 20);
 		elevators = elevators * numColumns;
 	}
 
     console.log("number of elevators: " + elevators);
+    console.log("number of columns: " + numColumns);
     res.send(elevators + "");
 });
 
 
-// /***** CALCULATE NUMBER OF ELEVATORS - COMMERCIAL BUILDING *****/
-// app.get('/elevatorsResidential', (req, res) => {
-//     let elevators = parseInt(req.query.apartments);
-//     console.log("number of elevators: " + elevators);
-//     res.send(elevators + "");
-// });
-
-
-
-
-
-
-// app.get('/elevatorsResidential', (req, res) => {
+/***** CALCULATE NUMBER OF ELEVATORS - CORPORATE BUILDING *****/
+app.get('/elevatorsCorporate', (req, res) => {
+    let floors = parseInt(req.query.floors);
+    let basements = parseInt(req.query.basements);
+    let occupants = parseInt(req.query.occupants);
     
-// });
-
-
-
-
-// const courses = [
-//     {id: 1, name: 'course1'},
-//     {id: 2, name: 'course2'},
-//     {id: 3, name: 'course3'},
-// ];
-
-// app.get('/api/courses', (req, res) => {
-//     res.send(courses);
-// });
-
-// app.get('/api/courses/:id', (req, res) => {
-//    const course =  courses.find(c => c.id === parseInt(req.params.id));
-//    if (!course) res.status(404).send('The course with given ID was not found :(');
-//    res.send(course);
-// });
-
-// app.post('/api/courses', (req, res) => {
-//     const {error} = validateCourse(req.body);
-//     if (error) return res.status(400).send(error.details[0].message);
-
-//     const course = {
-//         id: courses.length + 1,
-//         name: req.body.name
-//     };
-//     courses.push(course);
-//     res.send(course);
-// });
-
-// app.put('/api/courses/:id', (req, res) => {
-//    const course =  courses.find(c => c.id === parseInt(req.params.id));
-//    if (!course) return res.status(404).send('The course with given ID was not found :(');
+    let totalFloors = floors + basements;
+	let totalOccupants = occupants * totalFloors;
+	let elevators = Math.ceil(totalOccupants / 1000);
+	let numColumns = Math.ceil(totalFloors / 20);
+	let elevatorsPerColumn = Math.ceil(elevators / numColumns);
+    let elevatorsTotal = Math.ceil(elevatorsPerColumn * numColumns);
     
-//     const {error} = validateCourse(req.body);
-//     if (error) return res.status(400).send(result.error.details[0].message);
+    console.log("number of elevators: " + elevatorsTotal);
+    console.log("number of columns: " + numColumns);
+    res.send(elevatorsTotal + "");
+});
 
-//     course.name = req.body.name;
-//     res.send(course);
-// });
 
-// function validateCourse(course) {
-//     const schema = {
-//         name: Joi.string().min(3).required()
-//     };
+/***** CALCULATE NUMBER OF ELEVATORS - HYBRID BUILDING *****/
+app.get('/elevatorsHybrid', (req, res) => {
+    let floors = parseInt(req.query.floors);
+    let basements = parseInt(req.query.basements);
+    let occupants = parseInt(req.query.occupants);
     
-//     return Joi.validate(course, schema);
-// };
-
-// app.delete('/api/courses/:id', (req, res) => {
-//     const course =  courses.find(c => c.id === parseInt(req.params.id));
-//    if (!course) return res.status(404).send('The course with given ID was not found :(');
-
-//    const index = courses.indexOf(course);
-//    courses.splice(index, 1); // go to the index and remove 1 object
-
-//    res.send(course);
-// });
-
+    let totalFloors = floors + basements;
+	let totalOccupants = occupants * totalFloors;
+	let elevators = Math.ceil(totalOccupants / 1000);
+	let numColumns = Math.ceil(totalFloors / 20);
+	let elevatorsPerColumn = Math.ceil(elevators / numColumns);
+    let elevatorsTotal = Math.ceil(elevatorsPerColumn * numColumns);
+    
+    console.log("number of elevators: " + elevatorsTotal);
+    console.log("number of columns: " + numColumns);
+    res.send(elevatorsTotal + "");
+});
 
 
+/***** CALCULATE PRICES STANDARD *****/
+app.get('/standard', (req, res) => {
+    let numElevators = parseInt(req.query.numElevators);
+    let priceElevators = numElevators * standardPrice;
+	let priceInstallation = priceElevators * (standardFee / 100);
+	let totalPrice = priceElevators + priceInstallation;
 
-// app.get('/api/posts/:id',  (req, res) => {
-//     res.send(req.params.id);
-// });
+    console.log("price of elevators: " + priceElevators);
+    console.log("priceInstallation of columns: " + priceInstallation);
+    console.log("totalPrice of elevators: " + totalPrice);
 
-// app.get('/api/posts/:year/:month',  (req, res) => {
-//     res.send(req.params);
-// });
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify({
+        standardPrice: standardPrice,
+        priceInstallation: priceInstallation ,
+        totalPrice: totalPrice,
+        }));  
+});
 
-// app.get('/api/posts/:year/:month',  (req, res) => {
-//     res.send(req.query);
-// });
+/***** CALCULATE PRICES PREMIUM *****/
+app.get('/premium', (req, res) => {
+    let numElevators = parseInt(req.query.numElevators);
+    let priceElevators = numElevators * premiumPrice;
+	let priceInstallation = priceElevators * (premiumFee / 100);
+	let totalPrice = priceElevators + priceInstallation;
+
+    console.log("price of elevators: " + priceElevators);
+    console.log("priceInstallation of columns: " + priceInstallation);
+    console.log("totalPrice of elevators: " + totalPrice);
+
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify({
+        premiumPrice: premiumPrice,
+        priceInstallation: priceInstallation ,
+        totalPrice: totalPrice,
+        }));  
+});
+
+/***** CALCULATE PRICES EXCELIUM *****/
+app.get('/excelium', (req, res) => {
+    let numElevators = parseInt(req.query.numElevators);
+    let priceElevators = numElevators * exceliumPrice;
+	let priceInstallation = priceElevators * (exceliumFee / 100);
+	let totalPrice = priceElevators + priceInstallation;
+
+    console.log("price of elevators: " + priceElevators);
+    console.log("priceInstallation of columns: " + priceInstallation);
+    console.log("totalPrice of elevators: " + totalPrice);
+
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify({
+        exceliumPrice: exceliumPrice,
+        priceInstallation: priceInstallation ,
+        totalPrice: totalPrice,
+        }));  
+});
 
 
 // PORT - eg.: at the terminal: export/set PORT=5000
