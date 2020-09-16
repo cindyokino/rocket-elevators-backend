@@ -10,15 +10,43 @@ app.use((req, res, next) => {
 });
 
 
+
 /***** CALCULATE NUMBER OF ELEVATORS - RESIDENTIAL BUILDING *****/
-app.get('/residential', (req, res) => {
-    let a = parseInt(req.query.a);
-    let b = parseInt(req.query.b);
-    let sum = a + b;
-    console.log(a + b);
-    res.set("Access-Control-Allow-Origin", "*");
-    res.send(sum + "");
+app.get('/elevatorsResidential', (req, res) => {
+    let apartments = parseInt(req.query.apartments);
+    let floors = parseInt(req.query.floors);
+    let basements = parseInt(req.query.basements);
+    let averageDoorsPerFloor =  Math.ceil(apartments / (floors - basements));
+
+    let elevators = Math.ceil(averageDoorsPerFloor / 6);
+    if (floors > 20) {
+		numColumns = Math.ceil(floors / 20);
+		elevators = elevators * numColumns;
+	}
+
+    console.log("number of elevators: " + elevators);
+    res.send(elevators + "");
 });
+
+
+/***** CALCULATE NUMBER OF ELEVATORS - COMMERCIAL BUILDING *****/
+app.get('/elevatorsResidential', (req, res) => {
+    let elevators = parseInt(req.query.apartments);
+    console.log("number of elevators: " + elevators);
+    res.send(elevators + "");
+});
+
+
+
+
+
+
+app.get('/elevatorsResidential', (req, res) => {
+    
+});
+
+
+
 
 // const courses = [
 //     {id: 1, name: 'course1'},
@@ -94,7 +122,7 @@ app.get('/residential', (req, res) => {
 
 
 // PORT - eg.: at the terminal: export/set PORT=5000
-const port = process.env.PORT || 3000;
+const port = 3000;
 app.listen(port, () => console.log(`Listening on port ${port}...`));
 
 
