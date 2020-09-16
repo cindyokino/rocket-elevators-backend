@@ -29,21 +29,21 @@ app.get('/elevatorsResidential', (req, res) => {
 });
 
 
-/***** CALCULATE NUMBER OF ELEVATORS - COMMERCIAL BUILDING *****/
-app.get('/elevatorsResidential', (req, res) => {
-    let elevators = parseInt(req.query.apartments);
-    console.log("number of elevators: " + elevators);
-    res.send(elevators + "");
-});
+// /***** CALCULATE NUMBER OF ELEVATORS - COMMERCIAL BUILDING *****/
+// app.get('/elevatorsResidential', (req, res) => {
+//     let elevators = parseInt(req.query.apartments);
+//     console.log("number of elevators: " + elevators);
+//     res.send(elevators + "");
+// });
 
 
 
 
 
 
-app.get('/elevatorsResidential', (req, res) => {
+// app.get('/elevatorsResidential', (req, res) => {
     
-});
+// });
 
 
 
@@ -122,7 +122,7 @@ app.get('/elevatorsResidential', (req, res) => {
 
 
 // PORT - eg.: at the terminal: export/set PORT=5000
-const port = 3000;
+const port = process.env.PORT || 5000;
 app.listen(port, () => console.log(`Listening on port ${port}...`));
 
 
